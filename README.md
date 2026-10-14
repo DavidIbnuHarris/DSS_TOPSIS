@@ -183,4 +183,4 @@ composer install
 
 ---
 
-Dengan panduan ini, pengguna yang mengunduh repository diharapkan dapat memahami proses instalasi, konfigurasi database, migrasi, seeder, login, serta cara menjalankan Laravel dan FastAPI.
+Dengan panduan ini, pengguna yang mengunduh repository diharapkan dapat memahami proses instalasi, konfigurasi database, migrasi, seeder, login, serta cara menjalankan Laravel dan FastAPI
