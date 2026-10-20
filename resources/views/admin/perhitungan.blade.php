@@ -35,7 +35,7 @@
                     <tr class="{{ $index === 0 ? 'table-success fw-bold' : '' }} text-center">
                         <td>{{ $index + 1 }}</td>
                         <td class="text-start">{{ $hasil['nama'] }}</td>
-                        <td>{{ $hasil['nilai_v'] }}</td>
+                        <td>{{ number_format((float) $hasil['nilai_v'], 3) }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -52,7 +52,7 @@
 
             @if($contoh_a && $contoh_k)
             <div class="alert alert-light border mb-3">
-                <strong>💡 Contoh Data:</strong> Baris <strong>{{ $contoh_a->nama_alternatif }}</strong> pada kolom <strong>{{ $contoh_k->nama_kriteria }}</strong> memiliki nilai rata-rata kuesioner sebesar <strong>{{ $matriks_x[$contoh_a->id][$contoh_k->id] ?? 0 }}</strong>.
+                <strong>💡 Contoh Data:</strong> Baris <strong>{{ $contoh_a->nama_alternatif }}</strong> pada kolom <strong>{{ $contoh_k->nama_kriteria }}</strong> memiliki nilai rata-rata kuesioner sebesar <strong>{{ number_format((float) ($matriks_x[$contoh_a->id][$contoh_k->id] ?? 0), 3) }}</strong>.
             </div>
             @endif
 
@@ -71,7 +71,7 @@
                         <tr>
                             <td>{{ $a->nama_alternatif }}</td>
                             @foreach ($kriteria as $k)
-                                <td class="text-center">{{ $matriks_x[$a->id][$k->id] ?? 0 }}</td>
+                                <td class="text-center">{{ number_format((float) ($matriks_x[$a->id][$k->id] ?? 0), 3) }}</td>
                             @endforeach
                         </tr>
                         @endforeach
@@ -102,7 +102,7 @@
                         <tr>
                             <td>√(Σ x²)</td>
                             @foreach ($kriteria as $k)
-                                <td class="text-center">{{ $pembagi[$k->id] ?? 0 }}</td>
+                                <td class="text-center">{{ number_format((float) ($pembagi[$k->id] ?? 0), 3) }}</td>
                             @endforeach
                         </tr>
                     </tbody>
@@ -125,7 +125,7 @@
                         <tr>
                             <td>{{ $a->nama_alternatif }}</td>
                             @foreach ($kriteria as $k)
-                                <td class="text-center">{{ $matriks_r[$a->id][$k->id] ?? 0 }}</td>
+                                <td class="text-center">{{ number_format((float) ($matriks_r[$a->id][$k->id] ?? 0), 3) }}</td>
                             @endforeach
                         </tr>
                         @endforeach
@@ -160,7 +160,7 @@
                         <tr>
                             <td>{{ $a->nama_alternatif }}</td>
                             @foreach ($kriteria as $k)
-                                <td class="text-center">{{ $matriks_y[$a->id][$k->id] ?? 0 }}</td>
+                                <td class="text-center">{{ number_format((float) ($matriks_y[$a->id][$k->id] ?? 0), 3) }}</td>
                             @endforeach
                         </tr>
                         @endforeach
@@ -197,13 +197,13 @@
                         <tr>
                             <td class="fw-semibold">A+ (Positif)</td>
                             @foreach ($kriteria as $k)
-                                <td class="text-center">{{ $ideal_positif[$k->id] ?? 0 }}</td>
+                                <td class="text-center">{{ number_format((float) ($ideal_positif[$k->id] ?? 0), 3) }}</td>
                             @endforeach
                         </tr>
                         <tr>
                             <td class="fw-semibold">A− (Negatif)</td>
                             @foreach ($kriteria as $k)
-                                <td class="text-center">{{ $ideal_negatif[$k->id] ?? 0 }}</td>
+                                <td class="text-center">{{ number_format((float) ($ideal_negatif[$k->id] ?? 0), 3) }}</td>
                             @endforeach
                         </tr>
                     </tbody>
@@ -233,8 +233,8 @@
                         @foreach ($alternatif as $a)
                         <tr>
                             <td>{{ $a->nama_alternatif }}</td>
-                            <td class="text-center">{{ $d_positif[$a->id] ?? 0 }}</td>
-                            <td class="text-center">{{ $d_negatif[$a->id] ?? 0 }}</td>
+                            <td class="text-center">{{ number_format((float) ($d_positif[$a->id] ?? 0), 3) }}</td>
+                            <td class="text-center">{{ number_format((float) ($d_negatif[$a->id] ?? 0), 3) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -264,17 +264,17 @@
                     <tbody>
                         @foreach ($alternatif as $a)
                             @php
-                                $d_neg = $d_negatif[$a->id] ?? 0;
-                                $d_pos = $d_positif[$a->id] ?? 0;
+                                $d_neg = (float) ($d_negatif[$a->id] ?? 0);
+                                $d_pos = (float) ($d_positif[$a->id] ?? 0);
                                 $total_d = $d_neg + $d_pos;
-                                $v = $total_d > 0 ? round($d_neg / $total_d, 4) : 0;
+                                $v = $total_d > 0 ? $d_neg / $total_d : 0;
                             @endphp
                         <tr>
                             <td>{{ $a->nama_alternatif }}</td>
-                            <td class="text-center">{{ $d_neg }}</td>
-                            <td class="text-center">{{ $d_pos }}</td>
-                            <td class="text-center">{{ round($total_d, 4) }}</td>
-                            <td class="text-center fw-bold text-success">{{ $v }}</td>
+                            <td class="text-center">{{ number_format($d_neg, 3) }}</td>
+                            <td class="text-center">{{ number_format($d_pos, 3) }}</td>
+                            <td class="text-center">{{ number_format($total_d, 3) }}</td>
+                            <td class="text-center fw-bold text-success">{{ number_format($v, 3) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
