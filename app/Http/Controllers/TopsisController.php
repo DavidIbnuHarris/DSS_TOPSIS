@@ -8,7 +8,7 @@ use App\Models\Kriteria;
 use App\Models\Skala;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Auth; // Tambahkan ini untuk deteksi user login
+use Illuminate\Support\Facades\Auth; // Untuk deteksi user login
 
 class TopsisController extends Controller
 {
@@ -17,9 +17,9 @@ class TopsisController extends Controller
     {
         $kriteria = Kriteria::all();
         $alternatif = Alternatif::all();
-        $skala = Skala::orderBy('nilai', 'asc')->get(); 
-        
-        return view('user.kuesioner', compact('kriteria', 'alternatif', 'skala')); 
+        $skala = Skala::orderBy('nilai', 'asc')->get();
+
+        return view('user.kuesioner', compact('kriteria', 'alternatif', 'skala'));
     }
 
     // 2. Simpan Jawaban Kuesioner
@@ -34,11 +34,11 @@ class TopsisController extends Controller
         if ($request->has('jawaban')) {
             foreach ($request->jawaban as $alternatif_id => $kriteria_data) {
                 foreach ($kriteria_data as $kriteria_id => $nilai) {
-                    
-                    // Gunakan updateOrInsert agar jika user merevisi jawaban, datanya di-update, bukan diduplikat
+
+                    // updateOrInsert agar jika user merevisi jawaban, datanya di-update, bukan diduplikat
                     DB::table('hasil_kuesioners')->updateOrInsert(
                         [
-                            'user_id' => $user_id, // Pastikan ada kolom user_id di database Anda
+                            'user_id' => $user_id,
                             'alternatif_id' => $alternatif_id,
                             'kriteria_id' => $kriteria_id,
                         ],
@@ -49,7 +49,7 @@ class TopsisController extends Controller
                 }
             }
         }
-        
+
         return redirect('/hasil');
     }
 
@@ -99,6 +99,9 @@ class TopsisController extends Controller
             dd('Server Python (Uvicorn) belum menyala! Error: ' . $e->getMessage());
         }
 
+        // PERBAIKAN: susun ulang peringkat memakai nama asli dari tabel alternatif
+        $hasil_python['hasil_akhir'] = $this->susunPeringkat($alternatif, $hasil_python);
+
         // Lempar data ranking ke halaman user/hasil.blade.php
         return view('user.hasil', $hasil_python);
     }
@@ -142,7 +145,7 @@ class TopsisController extends Controller
 
         try {
             $response = Http::post('http://127.0.0.1:8001/hitung-topsis', $payload);
-            
+
             if (!$response->successful()) {
                 dd([
                     'PESAN' => 'Error dari sistem Python (FastAPI)!',
@@ -152,11 +155,11 @@ class TopsisController extends Controller
             }
 
             $hasil_python = $response->json();
-            
+
             if (!is_array($hasil_python)) {
                 dd("ERROR: Python tidak mengembalikan format data JSON yang benar.", $response->body());
             }
-            
+
         } catch (\Exception $e) {
             dd([
                 'PESAN' => 'Koneksi Terputus! Server Python (Uvicorn) sepertinya belum menyala.',
@@ -165,13 +168,41 @@ class TopsisController extends Controller
             ]);
         }
 
+        // PERBAIKAN: susun ulang peringkat memakai nama asli dari tabel alternatif
+        $hasil_python['hasil_akhir'] = $this->susunPeringkat($alternatif, $hasil_python);
+
         // Kalau sukses semua, baru digabungkan untuk view
         $data_ke_view = array_merge([
             'kriteria' => $kriteria,
             'alternatif' => $alternatif,
-            'matriks_x' => $matriks_x 
+            'matriks_x' => $matriks_x
         ], $hasil_python);
 
         return view('admin.perhitungan', $data_ke_view);
+    }
+
+    // HELPER: menyusun peringkat dengan nama alternatif dari database
+    private function susunPeringkat($alternatif, array $hasil_python): array
+    {
+        $d_pos = $hasil_python['d_positif'] ?? [];
+        $d_neg = $hasil_python['d_negatif'] ?? [];
+
+        $ranking = [];
+        foreach ($alternatif as $a) {
+            $dp = $d_pos[$a->id] ?? 0;
+            $dn = $d_neg[$a->id] ?? 0;
+            $total = $dp + $dn;
+
+            $ranking[] = [
+                'id'      => $a->id,
+                'nama'    => $a->nama_alternatif, // nama asli dari tabel alternatif
+                'nilai_v' => $total > 0 ? round($dn / $total, 4) : 0,
+            ];
+        }
+
+        // Urutkan dari nilai V tertinggi ke terendah
+        usort($ranking, fn($x, $y) => $y['nilai_v'] <=> $x['nilai_v']);
+
+        return $ranking;
     }
 }

@@ -64,4 +64,28 @@ class MasterController extends Controller
         
         return redirect('/admin');
     }
+    public function destroyAlternatif($id)
+{
+    $alternatif = \App\Models\Alternatif::findOrFail($id);
+    $alternatif->delete();
+
+    return redirect()->back()->with('success', 'Data alternatif berhasil dihapus!');
+}
+public function destroyKriteria($id)
+{
+    // Pastikan nama model Kriteria sesuai dengan yang ada di folder app/Models
+    $kriteria = \App\Models\Kriteria::findOrFail($id);
+    $kriteria->delete();
+
+    return redirect()->back()->with('success', 'Data kriteria berhasil dihapus!');
+}
+
+public function destroySkala($id)
+{
+    // Pastikan nama model Skala sesuai dengan yang ada di folder app/Models (misal: Skala atau SkalaLikert)
+    $skala = \App\Models\Skala::findOrFail($id);
+    $skala->delete();
+
+    return redirect()->back()->with('success', 'Data skala kuesioner berhasil dihapus!');
+}
 }

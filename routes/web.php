@@ -18,6 +18,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', [TopsisController::class, 'kuesioner']);
     Route::post('/simpan-kuesioner', [TopsisController::class, 'simpanKuesioner']);
     Route::get('/hasil', [TopsisController::class, 'hasil']);
+    Route::delete('/admin/alternatif/{id}', [AlternatifController::class, 'destroy']);
+    Route::delete('/admin/alternatif/{id}', [\App\Http\Controllers\MasterController::class, 'destroyAlternatif']);
+    Route::delete('/admin/kriteria/{id}', [\App\Http\Controllers\MasterController::class, 'destroyKriteria']);
+Route::delete('/admin/skala/{id}', [\App\Http\Controllers\MasterController::class, 'destroySkala']);
 });
 
 // ==========================================
