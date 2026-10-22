@@ -73,11 +73,11 @@ def hitung(data: TopsisData):
     
     for a in alternatif:
         a_id = str(a['id'])
-        
+
         # Rumus jarak Euclidean
         sum_plus = sum((matriks_y[a_id][str(k['id'])] - ideal_positif[str(k['id'])])**2 for k in kriteria)
         sum_min = sum((matriks_y[a_id][str(k['id'])] - ideal_negatif[str(k['id'])])**2 for k in kriteria)
-        
+
         d_positif[a_id] = round(math.sqrt(sum_plus), 4)
         d_negatif[a_id] = round(math.sqrt(sum_min), 4)
 

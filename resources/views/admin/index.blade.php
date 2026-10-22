@@ -79,7 +79,13 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $a->nama_alternatif }}</td>
-                            <td><button class="btn btn-sm btn-danger">Hapus</button></td>
+                            <td>
+    <form action="/admin/alternatif/{{ $a->id }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus alternatif ini?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+    </form>
+</td>
                         </tr>
                         @empty
                         <tr>
@@ -136,7 +142,13 @@
                             <td>{{ $k->nama_kriteria }}</td>
                             <td>{{ $k->jenis }}</td>
                             <td>{{ $k->bobot }}</td>
-                            <td><button class="btn btn-sm btn-danger">Hapus</button></td>
+                            <td>
+    <form action="/admin/kriteria/{{ $k->id }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus kriteria ini?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+    </form>
+</td>
                         </tr>
                         @empty
                         <tr>
@@ -182,7 +194,13 @@
                         <tr>
                             <td>{{ $s->nilai }}</td>
                             <td>{{ $s->keterangan }}</td>
-                            <td><button class="btn btn-sm btn-danger">Hapus</button></td>
+                            <td>
+    <form action="/admin/skala/{{ $s->id }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus skala ini?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+    </form>
+</td>
                         </tr>
                         @empty
                         <tr>
